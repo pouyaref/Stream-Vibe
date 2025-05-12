@@ -15,23 +15,28 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import { BsMoon, BsSun, BsCalendarDate, BsHeart, BsHeartFill } from "react-icons/bs";
+import {
+  BsMoon,
+  BsSun,
+  BsCalendarDate,
+  BsHeart,
+  BsHeartFill,
+} from "react-icons/bs";
 import { IoEarth } from "react-icons/io5";
 import { RiMovie2Line } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
-const Header = ({ darkMode, setDarkMode }) => {
+const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  
+  const navigate = useNavigate();
+
+  const [darkMode, setDarkMode] = useState(true);
+
   const searchRef = useRef(null);
-  const modalRef = useRef(null);
 
   // Close search results when clicking outside
   useEffect(() => {
@@ -84,29 +89,6 @@ const Header = ({ darkMode, setDarkMode }) => {
     setShowSearchResults(false);
   };
 
-  const openMovieModal = (movie) => {
-    setSelectedMovie(movie);
-    setIsModalOpen(true);
-    setShowSearchResults(false);
-    setSearchQuery("");
-    // Check if movie is bookmarked (would come from your state management)
-    setIsBookmarked(false);
-    setIsFavorite(false);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedMovie(null);
-  };
-
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-  };
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
-
   return (
     <header
       className={`sticky top-0 z-50 shadow-md transition-colors duration-300 ${
@@ -145,22 +127,34 @@ const Header = ({ darkMode, setDarkMode }) => {
           </a>
           <ul className="menu menu-horizontal px-1 hidden md:flex gap-1">
             <li>
-              <a href="#" className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg">
+              <a
+                href="#"
+                className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg"
+              >
                 <FaHome className="text-lg" /> Home
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg">
+              <a
+                href="#"
+                className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg"
+              >
                 <FaFilm className="text-lg" /> Movies
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg">
+              <a
+                href="#"
+                className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg"
+              >
                 <FaTv className="text-lg" /> TV Shows
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg">
+              <a
+                href="#"
+                className="flex items-center gap-1 hover:bg-opacity-10 hover:bg-primary rounded-lg"
+              >
                 <FaBookmark className="text-lg" /> My List
               </a>
             </li>
@@ -177,7 +171,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                   type="text"
                   placeholder="Search movies..."
                   className={`input input-bordered focus:outline-none focus:ring-2 focus:ring-primary ${
-                    darkMode ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"
+                    darkMode
+                      ? "bg-gray-800 border-gray-700"
+                      : "bg-gray-50 border-gray-200"
                   } w-64 transition-all duration-200`}
                   value={searchQuery}
                   onChange={handleSearchChange}
@@ -186,7 +182,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                 {searchQuery ? (
                   <button
                     className={`btn btn-square ${
-                      darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-50 hover:bg-gray-100"
+                      darkMode
+                        ? "bg-gray-800 hover:bg-gray-700"
+                        : "bg-gray-50 hover:bg-gray-100"
                     } border-gray-700`}
                     onClick={clearSearch}
                   >
@@ -195,7 +193,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                 ) : (
                   <button
                     className={`btn btn-square ${
-                      darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-50 hover:bg-gray-100"
+                      darkMode
+                        ? "bg-gray-800 hover:bg-gray-700"
+                        : "bg-gray-50 hover:bg-gray-100"
                     } border-gray-700`}
                   >
                     <FaSearch />
@@ -228,12 +228,16 @@ const Header = ({ darkMode, setDarkMode }) => {
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.3 }}
+                          onClick={() => {
+                            navigate(`/movie/${movie.id}`);
+                          }}
                         >
                           <a
                             className={`flex items-center p-3 hover:bg-opacity-10 hover:bg-primary rounded-lg transition-colors ${
-                              darkMode ? "hover:text-white" : "hover:text-gray-900"
+                              darkMode
+                                ? "hover:text-white"
+                                : "hover:text-gray-900"
                             }`}
-                            onClick={() => openMovieModal(movie)}
                           >
                             <div className="avatar">
                               <div className="w-12 rounded">
@@ -250,10 +254,12 @@ const Header = ({ darkMode, setDarkMode }) => {
                               </div>
                             </div>
                             <div className="ml-3">
-                              <div className="font-semibold line-clamp-1">{movie.title}</div>
+                              <div className="font-semibold line-clamp-1">
+                                {movie.title}
+                              </div>
                               <div className="flex items-center text-xs opacity-70 mt-1">
                                 <FaStar className="text-yellow-400 mr-1" />
-                                {movie.imdb_rating || 'N/A'}
+                                {movie.imdb_rating || "N/A"}
                                 <span className="mx-2">•</span>
                                 <BsCalendarDate className="mr-1" />
                                 {movie.year}
@@ -267,7 +273,9 @@ const Header = ({ darkMode, setDarkMode }) => {
                     <div className="p-4 text-center flex flex-col items-center">
                       <RiMovie2Line className="text-3xl opacity-50 mb-2" />
                       <p>No results found</p>
-                      <p className="text-sm opacity-70">Try a different search term</p>
+                      <p className="text-sm opacity-70">
+                        Try a different search term
+                      </p>
                     </div>
                   )}
                 </motion.div>
@@ -292,14 +300,20 @@ const Header = ({ darkMode, setDarkMode }) => {
                     type="text"
                     placeholder="Search movies..."
                     className={`input input-bordered focus:outline-none ${
-                      darkMode ? "bg-gray-700 border-gray-600" : "bg-gray-50 border-gray-200"
+                      darkMode
+                        ? "bg-gray-700 border-gray-600"
+                        : "bg-gray-50 border-gray-200"
                     } w-full`}
                     value={searchQuery}
                     onChange={handleSearchChange}
                   />
-                  <button className={`btn btn-square ${
-                    darkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-50 hover:bg-gray-100"
-                  }`}>
+                  <button
+                    className={`btn btn-square ${
+                      darkMode
+                        ? "bg-gray-700 hover:bg-gray-600"
+                        : "bg-gray-50 hover:bg-gray-100"
+                    }`}
+                  >
                     <FaSearch />
                   </button>
                 </div>
@@ -320,9 +334,10 @@ const Header = ({ darkMode, setDarkMode }) => {
                         <li key={movie.id}>
                           <a
                             className={`flex items-center p-3 hover:bg-opacity-10 hover:bg-primary rounded-lg ${
-                              darkMode ? "hover:text-white" : "hover:text-gray-900"
+                              darkMode
+                                ? "hover:text-white"
+                                : "hover:text-gray-900"
                             }`}
-                            onClick={() => openMovieModal(movie)}
                           >
                             <div className="avatar">
                               <div className="w-10 rounded">
@@ -338,8 +353,12 @@ const Header = ({ darkMode, setDarkMode }) => {
                               </div>
                             </div>
                             <div className="ml-2">
-                              <div className="font-semibold line-clamp-1">{movie.title}</div>
-                              <div className="text-xs opacity-70">{movie.year}</div>
+                              <div className="font-semibold line-clamp-1">
+                                {movie.title}
+                              </div>
+                              <div className="text-xs opacity-70">
+                                {movie.year}
+                              </div>
                             </div>
                           </a>
                         </li>
@@ -483,183 +502,6 @@ const Header = ({ darkMode, setDarkMode }) => {
               <FaTimes className="text-xl" />
             </button>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Movie Detail Modal */}
-      <AnimatePresence>
-        {isModalOpen && selectedMovie && (
-          <>
-            {/* Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
-              onClick={closeModal}
-            />
-            
-            {/* Slide-in panel */}
-            <motion.div
-              ref={modalRef}
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25 }}
-              className={`fixed inset-y-0 right-0 z-50 w-full max-w-md shadow-2xl overflow-y-auto ${
-                darkMode ? "bg-gray-900" : "bg-white"
-              }`}
-            >
-              <div className="relative h-full">
-                {/* Movie backdrop */}
-                <div className="relative h-48 w-full overflow-hidden">
-                  <img
-                    src={selectedMovie.poster}
-                    alt={selectedMovie.title}
-                    className="w-full h-full object-cover blur-sm opacity-50"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                  
-                  {/* Close button */}
-                  <button
-                    onClick={closeModal}
-                    className={`absolute top-4 right-4 z-10 p-2 rounded-full ${
-                      darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-100"
-                    } shadow-lg`}
-                  >
-                    <FaTimes className="text-lg" />
-                  </button>
-                </div>
-
-                {/* Movie content */}
-                <div className="p-6 -mt-16 relative z-10">
-                  {/* Movie poster and actions */}
-                  <div className="flex gap-4 mb-6">
-                    <div className="flex-shrink-0 relative group">
-                      <img
-                        src={selectedMovie.poster}
-                        alt={selectedMovie.title}
-                        className="w-32 h-48 rounded-lg shadow-xl object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/300x450?text=No+Poster";
-                        }}
-                      />
-                      <button className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-lg transition-opacity">
-                        <FaPlay className="text-3xl text-white" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex-grow">
-                      <h2 className="text-2xl font-bold mb-1">
-                        {selectedMovie.title} <span className="opacity-70">({selectedMovie.year})</span>
-                      </h2>
-                      
-                      {/* Rating and metadata */}
-                      <div className="flex flex-wrap items-center gap-3 mb-3">
-                        {selectedMovie.imdb_rating && (
-                          <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-yellow-500/20 text-yellow-300 text-sm">
-                            <FaImdb className="text-lg" /> {selectedMovie.imdb_rating}
-                          </span>
-                        )}
-                        
-                        {selectedMovie.country && (
-                          <span className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-500/20 text-blue-300 text-sm">
-                            <IoEarth className="text-lg" /> {selectedMovie.country}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Action buttons */}
-                      <div className="flex gap-2 mt-4">
-                        <button
-                          className={`btn btn-primary btn-sm flex-1 gap-2 ${
-                            darkMode ? "bg-primary hover:bg-primary/90" : "bg-primary hover:bg-primary/90"
-                          }`}
-                        >
-                          <FaPlay /> Watch Now
-                        </button>
-                        
-                        <button
-                          onClick={toggleBookmark}
-                          className={`btn btn-square btn-sm ${
-                            darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                        >
-                          {isBookmarked ? (
-                            <FaSolidBookmark className="text-primary" />
-                          ) : (
-                            <FaRegBookmark />
-                          )}
-                        </button>
-                        
-                        <button
-                          onClick={toggleFavorite}
-                          className={`btn btn-square btn-sm ${
-                            darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"
-                          }`}
-                        >
-                          {isFavorite ? (
-                            <BsHeartFill className="text-red-500" />
-                          ) : (
-                            <BsHeart />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Genres */}
-                  {selectedMovie.genres && (
-                    <div className="mb-6">
-                      <h3 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">
-                        Genres
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedMovie.genres.map((genre, index) => (
-                          <span
-                            key={index}
-                            className={`px-3 py-1 rounded-full text-sm ${
-                              darkMode
-                                ? "bg-purple-900/50 text-purple-300"
-                                : "bg-purple-100 text-purple-800"
-                            }`}
-                          >
-                            {genre}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Plot */}
-                  <div className="mb-6">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-70">
-                      Overview
-                    </h3>
-                    <p className="opacity-90">
-                      {selectedMovie.plot || "No overview available."}
-                    </p>
-                  </div>
-
-                  {/* Cast (mock data) */}
-                  <div className="mb-6">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-70">
-                      Cast
-                    </h3>
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                      {[1, 2, 3, 4, 5].map((item) => (
-                        <div key={item} className="flex flex-col items-center">
-                          <div className="w-16 h-16 rounded-full bg-gray-600/20 mb-2"></div>
-                          <span className="text-xs">Actor {item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>
         )}
       </AnimatePresence>
     </header>
