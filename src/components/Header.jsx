@@ -504,7 +504,9 @@ const Header = () => {
                       {genres.slice(0, 8).map((genre) => (
                         <button
                           key={genre.id}
-                          onClick={() => handleNavigation(`/genre/${genre.id}`)}
+                          onClick={() =>
+                            handleNavigation(`/genre/${genre.name}/${genre.id}`)
+                          }
                           className="group flex items-center px-2 py-2 text-sm font-medium rounded-md w-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                         >
                           {genre.name}
