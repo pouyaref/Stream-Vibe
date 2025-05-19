@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   FaSearch,
-  FaUserCircle,
   FaTimes,
   FaHome,
   FaFilm,
   FaTv,
   FaBookmark,
+  FaSignInAlt,
+  FaUserPlus,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -349,10 +350,21 @@ const Header = () => {
               {darkMode ? <BsSun /> : <BsMoon />}
             </button>
 
-            {/* User Profile */}
-            <div className="relative">
-              <button className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
-                U
+            {/* Login and Register Buttons */}
+            <div className="hidden md:flex items-center space-x-2">
+              <button
+                onClick={() => handleNavigation("/login")}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              >
+                <FaSignInAlt className="mr-2" />
+                Login
+              </button>
+              <button
+                onClick={() => handleNavigation("/register")}
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                <FaUserPlus className="mr-2" />
+                Register
               </button>
             </div>
           </div>
@@ -513,6 +525,23 @@ const Header = () => {
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      onClick={() => handleNavigation("/login")}
+                      className="group flex items-center px-2 py-3 text-base font-medium rounded-md w-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <FaSignInAlt className="mr-4 text-lg" />
+                      Login
+                    </button>
+                    <button
+                      onClick={() => handleNavigation("/register")}
+                      className="group flex items-center px-2 py-3 text-base font-medium rounded-md w-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <FaUserPlus className="mr-4 text-lg" />
+                      Register
+                    </button>
                   </div>
                 </nav>
               </div>
