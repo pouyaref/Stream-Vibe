@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { FaSignInAlt, FaUser, FaLock, FaGoogle, FaFacebook } from "react-icons/fa";
+import {
+  FaSignInAlt,
+  FaUser,
+  FaLock,
+  FaGoogle,
+  FaFacebook,
+} from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,19 +21,47 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    // Basic validation
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // In a real app, you would call your authentication API here
-      // const response = await axios.post('/api/auth/login', { email, password });
-      
-      // For demo purposes, we'll just navigate to home
-      navigate("/");
+      const response = await axios.post(
+        "https://moviesapi.ir/oauth/token",
+        {
+          password: password,
+          username: email,
+          grant_type: "password",
+        },
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      // Redirect to home or previous page
+      if (response.status == 200) {
+        // Handle successful login
+        const { access_token, refresh_token, expires_in } = response.data;
+
+        // Store tokens (in real app, use secure storage)
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token);
+
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+        }
+
+        navigate("/");
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      //setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

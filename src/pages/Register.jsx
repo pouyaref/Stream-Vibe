@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { FaUserPlus, FaUser, FaEnvelope, FaLock, FaGoogle, FaFacebook } from "react-icons/fa";
+import {
+  FaUserPlus,
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaGoogle,
+  FaFacebook,
+} from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -17,15 +25,23 @@ const Register = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = "Full name is required";
     } else if (formData.name.length < 3) {
@@ -55,26 +71,42 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError("");
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // In a real app, you would call your registration API here
-      // const response = await axios.post('/api/auth/register', {
-      //   name: formData.name,
-      //   email: formData.email,
-      //   password: formData.password
-      // });
-      
-      // For demo purposes, we'll just navigate to login with success state
-      navigate("/login", { state: { registrationSuccess: true } });
+      // Create URLSearchParams object for form data
+      const formParams = new URLSearchParams();
+
+      formParams.append("name", formData.name.trim());
+      formParams.append("email", formData.email.trim());
+      formParams.append("password", formData.password);
+      console.log(formParams);
+      // Make the API call with form data
+      const response = await axios.post(
+        "https://moviesapi.ir/api/v1/register",
+        formParams,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      // Check for successful response
+      if (response.status == 201) {
+        //Successful registration
+        navigate("/login");
+        console.log(response);
+      } else {
+        console.log(response);
+        setApiError(response.data.errors);
+      }
     } catch (err) {
-      setApiError(err.response?.data?.message || "Registration failed. Please try again.");
+      console.log(err);
+      setApiError(err.response.data.errors);
     } finally {
       setIsLoading(false);
     }
@@ -142,12 +174,16 @@ const Register = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-2 border ${
-                    errors.name ? "border-red-300" : "border-gray-300 dark:border-gray-600"
+                    errors.name
+                      ? "border-red-300"
+                      : "border-gray-300 dark:border-gray-600"
                   } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
                   placeholder="John Doe"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.name}
+                  </p>
                 )}
               </div>
             </div>
@@ -171,12 +207,16 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-2 border ${
-                    errors.email ? "border-red-300" : "border-gray-300 dark:border-gray-600"
+                    errors.email
+                      ? "border-red-300"
+                      : "border-gray-300 dark:border-gray-600"
                   } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
                   placeholder="you@example.com"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.email}
+                  </p>
                 )}
               </div>
             </div>
@@ -200,12 +240,16 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-2 border ${
-                    errors.password ? "border-red-300" : "border-gray-300 dark:border-gray-600"
+                    errors.password
+                      ? "border-red-300"
+                      : "border-gray-300 dark:border-gray-600"
                   } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
                   placeholder="••••••••"
                 />
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.password}
+                  </p>
                 )}
               </div>
             </div>
@@ -229,12 +273,16 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className={`block w-full pl-10 pr-3 py-2 border ${
-                    errors.confirmPassword ? "border-red-300" : "border-gray-300 dark:border-gray-600"
+                    errors.confirmPassword
+                      ? "border-red-300"
+                      : "border-gray-300 dark:border-gray-600"
                   } rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm`}
                   placeholder="••••••••"
                 />
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
             </div>
@@ -251,7 +299,20 @@ const Register = () => {
                 htmlFor="terms"
                 className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
               >
-                I agree to the <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline">Privacy Policy</a>
+                I agree to the{" "}
+                <a
+                  href="#"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="#"
+                  className="text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Privacy Policy
+                </a>
               </label>
             </div>
 
