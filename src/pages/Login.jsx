@@ -32,36 +32,23 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://moviesapi.ir/oauth/token",
+        "http://localhost:3000/api/auth/login/",
         {
           password: password,
-          username: email,
-          grant_type: "password",
-        },
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
+          email: email,
         }
       );
 
       // Redirect to home or previous page
       if (response.status == 200) {
-        // Handle successful login
-        const { access_token, refresh_token, expires_in } = response.data;
-
-        // Store tokens (in real app, use secure storage)
-        localStorage.setItem("access_token", access_token);
-        localStorage.setItem("refresh_token", refresh_token);
-
-        if (rememberMe) {
-          localStorage.setItem("rememberMe", "true");
-        }
-
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", response.data.user.email);
+        localStorage.setItem("username", response.data.user.username);
         navigate("/");
       }
     } catch (err) {
-      //setError(errorMessage);
+      console.log(err);
+      setError(err.response.data.message);
     } finally {
       setIsLoading(false);
     }

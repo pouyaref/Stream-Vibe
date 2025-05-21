@@ -27,6 +27,9 @@ const Header = () => {
     localStorage.getItem("darkMode") === "true" || false
   );
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
+  const email = localStorage.getItem("email");
 
   const searchRef = useRef(null);
   const genresRef = useRef(null);
@@ -351,22 +354,57 @@ const Header = () => {
             </button>
 
             {/* Login and Register Buttons */}
-            <div className="hidden md:flex items-center space-x-2">
-              <button
-                onClick={() => handleNavigation("/login")}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-              >
-                <FaSignInAlt className="mr-2" />
-                Login
-              </button>
-              <button
-                onClick={() => handleNavigation("/register")}
-                className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-              >
-                <FaUserPlus className="mr-2" />
-                Register
-              </button>
-            </div>
+            {token ? (
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="avatar avatar-placeholder"
+                >
+                  <div className="bg-neutral text-neutral-content w-12 rounded-full">
+                    <span className="text-3xl">{username[0]}</span>
+                  </div>
+                </div>
+
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                >
+                  <li>
+                    <a>{email}</a>
+                  </li>
+                  <li>
+                    <a
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("username");
+                        localStorage.removeItem("email");
+                        location.reload();
+                      }}
+                    >
+                      logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center space-x-2">
+                <button
+                  onClick={() => handleNavigation("/login")}
+                  className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                >
+                  <FaSignInAlt className="mr-2" />
+                  Login
+                </button>
+                <button
+                  onClick={() => handleNavigation("/register")}
+                  className="flex items-center px-3 py-2 rounded-md text-sm font-medium bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <FaUserPlus className="mr-2" />
+                  Register
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

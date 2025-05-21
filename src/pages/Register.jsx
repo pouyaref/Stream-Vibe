@@ -77,21 +77,13 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      // Create URLSearchParams object for form data
-      const formParams = new URLSearchParams();
-
-      formParams.append("name", formData.name.trim());
-      formParams.append("email", formData.email.trim());
-      formParams.append("password", formData.password);
-      console.log(formParams);
       // Make the API call with form data
       const response = await axios.post(
-        "https://moviesapi.ir/api/v1/register",
-        formParams,
+        "http://localhost:3000/api/auth/signup/",
         {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
+          username: formData.name,
+          email: formData.email,
+          password: formData.password,
         }
       );
 
